@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="assets.css" media="all">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<style>
+
+</style>
+
+<body style="background-color: #f8f9fa">
+<nav class="navbar navbar-light bg-dark">
+    <div th:if="${rolelist.size()==2}">
+    <span class="text-left" th:text="${userCurrent.name} + ' '+' with Roles: ADMIN USER'"style="color: #f8f9fa"></span>
+    </div>
+    <div th:if="${rolelist.size()==1}">
+        <span class="text-left" th:text="${userCurrent.name} + 'with Roles: ADMIN'"></span>
+    </div>
+    <a style="color: #f8f9fa" class="link-right" href="/logout"  id="redirectlogoutlink" >Logout</a>
+</nav>
+
+<!-- Main container admin panel-->
+<div class="container-fluid">
+    <!-- Row two col Nav side column and Container main admin panel-->
+    <div class="row" >
+        <!-- Nav side column link User and Admin-->
+        <div class="col-sm-2 px-0">
+            <div class="card" style="height: 680px;padding: 0px">
+                <div class="card-body"style="padding: 0px">
+                    <ul class="nav nav-pills nav-fill flex-column">
+                        <!--<ul class="nav nav-tabs nav-pills flex-column" style="padding: 0px">-->
+    <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#adminNav">ADMIN</a>
+    </li>
+    <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#userNav">USER</a>
+    </li>
+</ul>
+                </div>
+        </div>
+        </div>
+            <!-- The end nav flex column link user and admin-->
+        <!-- Container body admin panel-->
+        <div class="col-sm-10" >
+            <div class="container-fluid">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="adminNav">
+                        <h1>Admin panel</h1>
+                        <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#description">Users table</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#characteristics">New User</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <!-- Первый блок (он отображается по умолчанию, т.к. имеет классы show и active) -->
+                    <div class="tab-pane fade show active" id="description">
+
+<!-- Head form users tables: ID,Name,Password ...-->
+                        <div class="card">
+                            <h3 class="card-header">All Users</h3>
+                            <div class="card-body">
+                        <table class="table">
+                            <thead >
+                            <tr>
+                                <th>ID</th>
+                                <th>NAME</th>
+                                <th>AGE</th>
+                                <th>PASSWORD</th>
+                                <th>ROLE</th>
+                                <th>EDIT</th>
+                                <th>DELETE</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tbodyId">
+                            <div id="mainTableUser">
+                            <tr th:id="${user.id}" th:each = " user : ${userlist}">
+                                        <td>
+                                            <input th:value="${user.id}" readonly type="text" class="form-control-plaintext"/>
+                                        </td>
+                                        <td>
+                                            <input th:value="${user.name}" id="test"  readonly class="form-control-plaintext">
+                                        </td>
+                                        <td >
+                                            <input th:value="${user.age}" readonly class="form-control-plaintext">
+                                        </td>
+                                        <td>
+                                            <input th:value="${user.password}" readonly class="form-control-plaintext">
+                                        </td>
+                                            <td th:if= "${user.roleSet.size()==2}">
+                                                <input name="role" class="form-control-plaintext" th:value="${user.roleSet.get(0).role +','+ user.roleSet.get(1).role}">
+                                            </td >
+                                            <td th:if="${user.roleSet.size()==1}">
+                                                <input name="role" class="form-control-plaintext" th:value="${user.roleSet.get(0).role}">
+                                            </td>
+                                        <td >
+                                            <!-- Button trigger modal edit-->
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalUpdate" th:data-user-id="${user.id}">
+                                                Edit
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDelete" th:data-user-id="${user.id}">
+                                                Delete
+                                            </button>
+                                        </td>
+
+                            </tr>
+                            </div>
+                            </tbody>
+                        </table>
+                            </div>
+                        </div>
+        <!--Head form users tables end -->
+            <!-- Value form Users tables-->
+
+
+                    <!-- Modal Edit -->
+                    <div class="modal" id="modalUpdate" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalCenteredLabelUpdate">Edit</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="formUpdateUser">
+                                    <input type="hidden" name="id" id="modalUpdateId" >
+                                    <p class="text-center" style="padding-top: 20px">Name</p>
+                                    <div class="container-fluid" style="padding-left: 35%">
+                                            <input  style="width: 50%" class="text-center form-control" id="modalUpdateName" name="name" />
+                                    </div>
+                                    <p class="text-center" style="padding-top: 20px">Age</p>
+                                    <div class="container-fluid" style="padding-left: 35%">
+                                            <input type="number" style="width: 50%" class="text-center form-control" id="modalUpdateAge" name="age"/>
+                                    </div>
+                                    <p class="text-center" style="padding-top: 20px">Password</p>
+                                    <div class="container-fluid" style="padding-left: 35%">
+                                            <input style="width: 50%" class="text-center form-control" id="modalUpdatePassword" name="password" />
+                                    </div>
+                                    <div>
+                                        <p class="text-center">Roles</p>
+                                        <div class="container-fluid" style="padding-left: 35%;padding-bottom: 30px;padding-top: 20px">
+                                            <select id="selectFormUpdate" name="role" class="custom-select" style="width: 50%;" multiple>
+                                                <option name="admin" value="ROLE_ADMIN" class="text-center">Admin</option>
+                                                <option name="user" value="ROLE_USER">User</option>
+                                            </select>
+                                        </div>
+                                    </div >
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Edit</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Model end-->
+
+                        <!-- Modal Delete -->
+                        <div class="modal" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalCenteredLabel">Delete</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="formDelete">
+                                            <input type="hidden" name="idDelete" id="modalDeleteId" >
+                                            <p class="text-center" style="padding-top: 20px">Name</p>
+                                            <div class="container-fluid" style="padding-left: 35%">
+                                                <input readonly style="width: 50%" class="text-center form-control" id="modalDeleteName" name="name" />
+                                            </div>
+                                            <p class="text-center" style="padding-top: 20px">Age</p>
+                                            <div class="container-fluid" style="padding-left: 35%">
+                                                <input readonly type="number" style="width: 50%" class="text-center form-control" id="modalDeleteAge" name="age"/>
+                                            </div>
+                                            <p class="text-center" style="padding-top: 20px">Password</p>
+                                            <div class="container-fluid" style="padding-left: 35%">
+                                                <input readonly style="width: 50%" class="text-center form-control" id="modalDeletePassword" name="password" />
+                                            </div>
+                                            <div>
+                                                <p class="text-center">Roles</p>
+                                                <div class="container-fluid" style="padding-left: 35%;padding-bottom: 30px;padding-top: 20px" >
+                                                    <input readonly style="width: 50%" class="text-center form-control" id="modelDeleteRole">
+                                                </div>
+                                            </div >
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Delete</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!--Model end-->
+                <br/>
+                </div>
+            <!--Value form Users end-->
+        <!-- Card-body first Users table end-->
+    <!-- First tabs end -->
+    <!-- Two tabs and two card body -->
+    <div class="tab-pane fade" id="characteristics">
+        <div class="card">
+            <h3 class="card-header">Add new user</h3>
+        <div class="card-body">
+        <form id="formInsert"  >
+            <p class="text-center">Name</p>
+            <div class="container-fluid" style="padding-left: 35%">
+            <input id="formInputAjaxName" class="form-control" style="width: 50%" name="name">
+            </div>
+            <p class="text-center">Password</p>
+            <div class="container-fluid" style="padding-left: 35%">
+            <input id="formInputAjaxPassword"class="form-control" style="width: 50%;" name="password">
+            </div>
+            <p class="text-center">Age</p>
+            <div class="container-fluid" style="padding-left: 35%">
+            <input id="formInputAjaxAge" class="form-control" style="width: 50%;" name="age">
+            </div>
+            <p class="text-center">Role</p>
+            <div class="container-fluid" style="padding-left: 35%">
+            <select id="selectRoleInsert" name="roleInsert" style="width: 50%;" multiple>
+                <option name="adminInsert" value="ROLE_ADMIN">Admin</option>
+                <option name="userInsert" value="ROLE_USER">User</option>
+            </select>
+            </div>
+            <div style="padding-left: 35%; padding-top: 20px" class="container-fluid">
+            <button id="testButton" type="submit" class="btn btn-success" style="width: 50%;">Add new user</button>
+            </div>
+
+        </form>
+            <input th:if="${ajaxUserResp != null}" type="hidden" id="ajaxUserRespId" th:value="${ajaxUserResp.name}"/>
+
+        </div>
+        </div>
+</div>
+
+                    </div>
+                </div>
+    <!-- Two tabs and two card-body the end-->
+                    <div class="tab-pane fade show " id="userNav">
+                        <h1>User information-page</h1>
+                        <div class="card">
+                            <h3 class="card-header">About user</h3>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>NAME</th>
+                                        <th>AGE</th>
+                                        <th>PASSWORD</th>
+                                        <th>ROLE</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <input class="form-control" th:value="${userCurrent.id}" readonly/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" th:value="${userCurrent.name}" readonly/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" th:value="${userCurrent.age}" readonly/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" th:value="${userCurrent.password}" readonly/>
+                                        </td>
+                                        <td th:each="role : ${rolelist}">
+                                            <input class="form-control" th:value="${role.role}" readonly/>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+</div>
+
+                <!--Card Users table the end-->
+</div>
+            <!--The end Container admin panel-->
+</div>
+        <!-- The end Row two col Nav side column and Container main admin panel-->
+
+    <!-- The end main container admin panel-->
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script>
+    $('#formUpdateUser').on("submit",function (event) {
+        event.preventDefault();
+        $.ajax({
+            url: 'update',
+            type : 'post',
+            cache : false,
+            data: $(this).serialize(),
+            success: function (response) {
+                var i = 0;
+                var test1 = [response.id,response.name,response.age,response.password,$('#selectFormUpdate').val()];
+                $(".modal").modal("hide");
+                alert("Успешно обновлено" + response.id +response.name);
+                $('#'+ response.id).find('input').each(function () {
+                   $(this).val(test1[i]);
+                   i++;
+                });
+            }
+        })
+    })
+    $('#formDelete').on("submit",function (event) {
+        event.preventDefault();
+        $.ajax({
+            url:'delete',
+            type:'post',
+            cache: false,
+            data: $(this).serialize(),
+            success: function (response) {
+                $(".modal").modal("hide");
+                $("#"+response.id+"").remove();
+            }
+        })
+    })
+    $('#formInsert').on("submit",function (event) {
+        event.preventDefault();
+        $.ajax({
+            url : 'insert',
+            type : 'post',
+            cache: false,
+            data: $(this).serialize(),
+            success : function (response) {
+                $('#formInputAjaxName').val('');
+                $('#formInputAjaxPassword').val('');
+                $('#formInputAjaxAge').val('');
+                alert("Добавление прошло успешно");
+                $('#tbodyId').after(
+                    "<tr id='" + response.id + "'>" +
+                    "<td><input id='ajaxIdInsert' class='form-control-plaintext' value="+response.id+" + readonly />" +
+                    "</td>" +
+                    "<td><input id='ajaxNameInsert' class='form-control-plaintext' readonly />" +
+                    "</td>"+
+                    "<td><input id='ajaxAgeInsert' class='form-control-plaintext' readonly />" +
+                    "</td>" +
+                    "<td><input id='ajaxPasswordInsert' class='form-control-plaintext' readonly />" +
+                    "</td>" +
+                    "<td><input id='ajaxRoleInsert2' class='form-control-plaintext' readonly />" +
+                    "</td>" +
+                    "<td >" +
+                    "<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#modalUpdate' data-user-id='"+response.id+"'>" +
+                    "Edit" +
+                    "</button>" +
+                    "</td>" +
+                    "<td>" +
+                    "<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#modalDelete' data-user-id='"+response.id+"'>" +
+                    "Delete" +
+                    "</button>" +
+                    "</td>"+
+                    "</tr>"
+                );
+                $('#ajaxNameInsert').val(response.name);
+                $('#ajaxAgeInsert').val(response.age);
+                $('#ajaxPasswordInsert').val(response.password);
+                $('#ajaxRoleInsert2').val($('#selectRoleInsert').val());
+            }
+        })
+
+    })
+
+    $("#modalUpdate").on('show.bs.modal', function (e) {
+        var userId = $(e.relatedTarget).data('user-id');
+        var test = [];
+
+        $('#' + userId).find('input').each(function () {
+            test.push($(this).val());
+        });
+
+
+        var name = test[1];
+        var age = test[2];
+        var password = test[3];
+        var role = test[4];
+
+        $('#modalUpdateId').val(test[0])
+        $("#modalUpdateName").val(name);
+        $('#modalUpdateAge').val(age);
+        $('#modalUpdatePassword').val(password);
+
+    });
+    $("#modalDelete").on('show.bs.modal', function (e) {
+        var userId = $(e.relatedTarget).data('user-id');
+        var test = [];
+
+        $('#' + userId).find('input').each(function () {
+            test.push($(this).val());
+        });
+
+
+        var name = test[1];
+        var age = test[3];
+        var password = test[2];
+        var role = test[4];
+
+        $('#modalDeleteId').val(test[0])
+        $("#modalDeleteName").val(name);
+        $('#modalDeleteAge').val(age);
+        $('#modalDeletePassword').val(password);
+        $('#modelDeleteRole').val(role);
+    });
+</script>
+
+</body>
+</html>

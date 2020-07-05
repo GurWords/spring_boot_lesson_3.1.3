@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<nav class="navbar navbar-light bg-dark">
+        <span class="text-left" th:text="${user.name} + ' '+' with Roles: USER'"style="color: #f8f9fa"></span>
+    <a style="color: #f8f9fa" class="link-right" href="/logout"  id="redirectlogoutlink" >Logout</a>
+</nav>
+<div class="container-fluid">
+    <!-- Row two col Nav side column and Container main admin panel-->
+    <div class="row" >
+        <!-- Nav side column link User and Admin-->
+        <div class="col-sm-2 px-0">
+            <div class="card" style="height: 680px;padding: 0px">
+                <div class="card-body"style="padding: 0px">
+                    <ul class="nav nav-pills nav-fill flex-column">
+                        <!--<ul class="nav nav-tabs nav-pills flex-column" style="padding: 0px">-->
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#userNav">USER</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- The end nav flex column link user and admin-->
+        <!-- Container body admin panel-->
+        <div class="col-sm-10" >
+            <div class="container-fluid">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="userNav">
+                        <h1>User information-page</h1>
+                        <div class="card">
+                            <h3 class="card-header">About user</h3>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>NAME</th>
+                                        <th>AGE</th>
+                                        <th>PASSWORD</th>
+                                        <th>ROLE</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <input class="form-control" th:value="${user.id}" readonly/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" th:value="${user.name}" readonly/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" th:value="${user.age}" readonly/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" th:value="${user.password}" readonly/>
+                                        </td>
+                                        <td th:each="role1 : ${role}">
+                                            <input class="form-control" th:value="${role1.role}" readonly/>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
