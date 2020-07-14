@@ -1,5 +1,6 @@
 package web.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,8 +15,9 @@ public class Role implements GrantedAuthority {
     Long id;
     @Column(name = "role")
     String role;
+    @JsonIgnore
     @ManyToMany(mappedBy = "roleSet", fetch = FetchType.LAZY)
-    List<User> userList = new ArrayList<>();
+    Set<User> userList = new HashSet<>();
 
     public Role() {
     }
@@ -49,11 +51,11 @@ public class Role implements GrantedAuthority {
         this.role = role;
     }
 
-    public List<User> getUserList() {
+    public Set<User> getUserList() {
         return userList;
     }
 
-    public void setUserList(List<User> userList) {
+    public void setUserList(Set<User> userList) {
         this.userList = userList;
     }
 

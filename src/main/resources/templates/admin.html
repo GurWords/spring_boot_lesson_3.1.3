@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="assets.css" media="all">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta charset="UTF-8">
@@ -15,12 +13,7 @@
 
 <body style="background-color: #f8f9fa">
 <nav class="navbar navbar-light bg-dark">
-    <div th:if="${rolelist.size()==2}">
-    <span class="text-left" th:text="${userCurrent.name} + ' '+' with Roles: ADMIN USER'"style="color: #f8f9fa"></span>
-    </div>
-    <div th:if="${rolelist.size()==1}">
-        <span class="text-left" th:text="${userCurrent.name} + 'with Roles: ADMIN'"></span>
-    </div>
+    <span id="AdminSpanHead" class="text-left" style="color: #f8f9fa"></span>
     <a style="color: #f8f9fa" class="link-right" href="/logout"  id="redirectlogoutlink" >Logout</a>
 </nav>
 
@@ -81,38 +74,7 @@
                             </thead>
                             <tbody id="tbodyId">
                             <div id="mainTableUser">
-                            <tr th:id="${user.id}" th:each = " user : ${userlist}">
-                                        <td>
-                                            <input th:value="${user.id}" readonly type="text" class="form-control-plaintext"/>
-                                        </td>
-                                        <td>
-                                            <input th:value="${user.name}" id="test"  readonly class="form-control-plaintext">
-                                        </td>
-                                        <td >
-                                            <input th:value="${user.age}" readonly class="form-control-plaintext">
-                                        </td>
-                                        <td>
-                                            <input th:value="${user.password}" readonly class="form-control-plaintext">
-                                        </td>
-                                            <td th:if= "${user.roleSet.size()==2}">
-                                                <input name="role" class="form-control-plaintext" th:value="${user.roleSet.get(0).role +','+ user.roleSet.get(1).role}">
-                                            </td >
-                                            <td th:if="${user.roleSet.size()==1}">
-                                                <input name="role" class="form-control-plaintext" th:value="${user.roleSet.get(0).role}">
-                                            </td>
-                                        <td >
-                                            <!-- Button trigger modal edit-->
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalUpdate" th:data-user-id="${user.id}">
-                                                Edit
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDelete" th:data-user-id="${user.id}">
-                                                Delete
-                                            </button>
-                                        </td>
 
-                            </tr>
                             </div>
                             </tbody>
                         </table>
@@ -246,8 +208,6 @@
             </div>
 
         </form>
-            <input th:if="${ajaxUserResp != null}" type="hidden" id="ajaxUserRespId" th:value="${ajaxUserResp.name}"/>
-
         </div>
         </div>
 </div>
@@ -270,24 +230,7 @@
                                         <th>ROLE</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            <input class="form-control" th:value="${userCurrent.id}" readonly/>
-                                        </td>
-                                        <td>
-                                            <input class="form-control" th:value="${userCurrent.name}" readonly/>
-                                        </td>
-                                        <td>
-                                            <input class="form-control" th:value="${userCurrent.age}" readonly/>
-                                        </td>
-                                        <td>
-                                            <input class="form-control" th:value="${userCurrent.password}" readonly/>
-                                        </td>
-                                        <td th:each="role : ${rolelist}">
-                                            <input class="form-control" th:value="${role.role}" readonly/>
-                                        </td>
-                                    </tr>
+                                    <tbody id="userCurrentTable">
                                     </tbody>
                                 </table>
                             </div>
@@ -308,125 +251,6 @@
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script>
-    $('#formUpdateUser').on("submit",function (event) {
-        event.preventDefault();
-        $.ajax({
-            url: 'update',
-            type : 'post',
-            cache : false,
-            data: $(this).serialize(),
-            success: function (response) {
-                var i = 0;
-                var test1 = [response.id,response.name,response.age,response.password,$('#selectFormUpdate').val()];
-                $(".modal").modal("hide");
-                alert("Успешно обновлено" + response.id +response.name);
-                $('#'+ response.id).find('input').each(function () {
-                   $(this).val(test1[i]);
-                   i++;
-                });
-            }
-        })
-    })
-    $('#formDelete').on("submit",function (event) {
-        event.preventDefault();
-        $.ajax({
-            url:'delete',
-            type:'post',
-            cache: false,
-            data: $(this).serialize(),
-            success: function (response) {
-                $(".modal").modal("hide");
-                $("#"+response.id+"").remove();
-            }
-        })
-    })
-    $('#formInsert').on("submit",function (event) {
-        event.preventDefault();
-        $.ajax({
-            url : 'insert',
-            type : 'post',
-            cache: false,
-            data: $(this).serialize(),
-            success : function (response) {
-                $('#formInputAjaxName').val('');
-                $('#formInputAjaxPassword').val('');
-                $('#formInputAjaxAge').val('');
-                alert("Добавление прошло успешно");
-                $('#tbodyId').after(
-                    "<tr id='" + response.id + "'>" +
-                    "<td><input id='ajaxIdInsert' class='form-control-plaintext' value="+response.id+" + readonly />" +
-                    "</td>" +
-                    "<td><input id='ajaxNameInsert' class='form-control-plaintext' readonly />" +
-                    "</td>"+
-                    "<td><input id='ajaxAgeInsert' class='form-control-plaintext' readonly />" +
-                    "</td>" +
-                    "<td><input id='ajaxPasswordInsert' class='form-control-plaintext' readonly />" +
-                    "</td>" +
-                    "<td><input id='ajaxRoleInsert2' class='form-control-plaintext' readonly />" +
-                    "</td>" +
-                    "<td >" +
-                    "<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#modalUpdate' data-user-id='"+response.id+"'>" +
-                    "Edit" +
-                    "</button>" +
-                    "</td>" +
-                    "<td>" +
-                    "<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#modalDelete' data-user-id='"+response.id+"'>" +
-                    "Delete" +
-                    "</button>" +
-                    "</td>"+
-                    "</tr>"
-                );
-                $('#ajaxNameInsert').val(response.name);
-                $('#ajaxAgeInsert').val(response.age);
-                $('#ajaxPasswordInsert').val(response.password);
-                $('#ajaxRoleInsert2').val($('#selectRoleInsert').val());
-            }
-        })
-
-    })
-
-    $("#modalUpdate").on('show.bs.modal', function (e) {
-        var userId = $(e.relatedTarget).data('user-id');
-        var test = [];
-
-        $('#' + userId).find('input').each(function () {
-            test.push($(this).val());
-        });
-
-
-        var name = test[1];
-        var age = test[2];
-        var password = test[3];
-        var role = test[4];
-
-        $('#modalUpdateId').val(test[0])
-        $("#modalUpdateName").val(name);
-        $('#modalUpdateAge').val(age);
-        $('#modalUpdatePassword').val(password);
-
-    });
-    $("#modalDelete").on('show.bs.modal', function (e) {
-        var userId = $(e.relatedTarget).data('user-id');
-        var test = [];
-
-        $('#' + userId).find('input').each(function () {
-            test.push($(this).val());
-        });
-
-
-        var name = test[1];
-        var age = test[3];
-        var password = test[2];
-        var role = test[4];
-
-        $('#modalDeleteId').val(test[0])
-        $("#modalDeleteName").val(name);
-        $('#modalDeleteAge').val(age);
-        $('#modalDeletePassword').val(password);
-        $('#modelDeleteRole').val(role);
-    });
-</script>
-
+<script src="adminScript.js" type="text/javascript"></script>
 </body>
 </html>

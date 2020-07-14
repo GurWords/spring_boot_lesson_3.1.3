@@ -1,5 +1,6 @@
 package web.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,29 +11,29 @@ import java.util.*;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    private int id;
     @Column(name = "name")
-    String name;
+    private String name;
     @Column(name = "age")
-    int age;
+    private int age;
     @Column(name = "password")
-    String password;
+    private String password;
 
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "User_And_Role",
             joinColumns = @JoinColumn(name = "USER_ID"),
             inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
-    List<Role> roleSet = new ArrayList<>();
+    private Set<Role> roleSet = new HashSet<>();
 
     public User() {
     }
 
-    public List<Role> getRoleSet() {
+    public Set<Role> getRoleSet() {
         return roleSet;
     }
 
-    public void setRoleSet(List<Role> roleSet) {
+    public void setRoleSet(Set<Role> roleSet) {
         this.roleSet = roleSet;
     }
 
@@ -117,7 +118,7 @@ public class User implements UserDetails {
     public void userUpdateRole(String[] roleArrays){
         Role roleUser = new Role(2L, "ROLE_USER");
         Role roleAdmin = new Role(1L, "ROLE_ADMIN");
-        List<Role> newRoleList = new ArrayList<>();
+        Set<Role> newRoleList = new HashSet<>();
         for (String i : roleArrays) {
             if (i.equals("ROLE_ADMIN")) {
                 newRoleList.add(roleAdmin);
@@ -158,7 +159,7 @@ public class User implements UserDetails {
         public Builder withRole(String[] roleArrays) {
             Role roleUser = new Role(2L, "ROLE_USER");
             Role roleAdmin = new Role(1L, "ROLE_ADMIN");
-            List<Role> newRoleList = new ArrayList<>();
+            Set<Role> newRoleList = new HashSet<>();
             for (String i : roleArrays) {
                 if (i.equals("ROLE_ADMIN")) {
                     newRoleList.add(roleAdmin);
