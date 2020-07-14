@@ -4,16 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import web.dao.userdao.UserDao;
-import web.model.Role;
 import web.model.User;
 import web.service.userservice.UserService;
-
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/")
@@ -26,16 +20,10 @@ public class AdminController {
     private UserDao dao;
 
     @PostMapping(value = "admin/insert")
-    public ResponseEntity<User> insertRestController(@RequestParam String name, String password, int age, String roleInsert) {
-        String[] roleArray = roleInsert.split(",");
-        User user1 = new User.Builder()
-                .withName(name)
-                .withPassword(password)
-                .withAge(age)
-                .withRole(roleArray)
-                .build();
-        service.insertUser(user1);
-        return ResponseEntity.ok(user1);
+    public ResponseEntity<User> insertRestController(@RequestBody User userInsert) {
+        userInsert.userUpdateRole(userInsert.getRole());
+        service.insertUser(userInsert);
+        return ResponseEntity.ok(userInsert);
     }
 
     @DeleteMapping(value = "admin/delete")
@@ -46,11 +34,12 @@ public class AdminController {
     }
 
     @PutMapping(value = "admin/update")
-    ResponseEntity<User> updateUserPost(@RequestBody User userUpdate,@RequestParam String role) {
-        if (role != null) {
-            String[] roleArray = role.split(",");
-            userUpdate.userUpdateRole(roleArray);
-        }
+    ResponseEntity<User> updateUserPost(@RequestBody User userUpdate) {
+//        if (role != null) {
+//            String[] roleArray = role.split(",");
+//            userUpdate.userUpdateRole(roleArray);
+//        }
+        userUpdate.userUpdateRole(userUpdate.getRole());
         service.updateUser(userUpdate);
         return ResponseEntity.ok(userUpdate);
     }

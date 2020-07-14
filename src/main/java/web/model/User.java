@@ -19,14 +19,23 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "User_And_Role",
             joinColumns = @JoinColumn(name = "USER_ID"),
             inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private Set<Role> roleSet = new HashSet<>();
 
+    private String[] role;
+
     public User() {
+    }
+
+    public String[] getRole() {
+        return role;
+    }
+
+    public void setRole(String[] role) {
+        this.role = role;
     }
 
     public Set<Role> getRoleSet() {

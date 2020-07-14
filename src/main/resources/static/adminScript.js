@@ -64,13 +64,20 @@ $(document).ready(function() {
     })
     $('#formUpdateUser').on("submit",function (event) {
         event.preventDefault();
+        let formUpdateData = {
+            id : $("#modalUpdateId").val(),
+            name : $("#modalUpdateName").val(),
+            age :  $("#modalUpdateAge").val(),
+            password : $("#modalUpdatePassword").val(),
+            role : $("#selectFormUpdate").val()
+        }
         $.ajax({
             url: 'admin/update',
             type : 'put',
             cache : false,
-            //data_type: 'application/json;charset=utf-8',
             contentType : 'application/json;charset=utf-8',
-            data: $(this).serialize(),
+            data_type: 'json',
+            data: JSON.stringify(formUpdateData),
             success: function (response) {
                 let i = 0;
                 let test1 = [response.id,response.name,response.age,response.password,$('#selectFormUpdate').val()];
@@ -97,12 +104,20 @@ $(document).ready(function() {
         })
     })
     $('#formInsert').on("submit",function (event) {
+                let formData = {
+                    name : $("#formInputAjaxName").val(),
+                    age :  $("#formInputAjaxAge").val(),
+                    password : $("#formInputAjaxPassword").val(),
+                    role : $("#selectRoleInsert").val()
+                }
         event.preventDefault();
         $.ajax({
             url : 'admin/insert',
             type : 'post',
+            contentType : 'application/json;charset=utf-8',
             cache: false,
-            data: $(this).serialize(),
+            data_type : 'json',
+            data: JSON.stringify(formData),
             success : function (response) {
                 $('#formInputAjaxName').val('');
                 $('#formInputAjaxPassword').val('');
@@ -136,6 +151,9 @@ $(document).ready(function() {
                 $('#ajaxAgeInsert').val(response.age);
                 $('#ajaxPasswordInsert').val(response.password);
                 $('#ajaxRoleInsert2').val($('#selectRoleInsert').val());
+            },
+            error: function (response) {
+                    alert(response.name)
             }
         })
 
